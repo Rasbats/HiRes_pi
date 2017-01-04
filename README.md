@@ -9,4 +9,4 @@ updated.
 WINDOWS ... The utility can be installed from the .exe in the Releases section here. If using the dll please remove .pdf and copy to
 the plugins folder.
 
-Not yet tested with Linux.
+This plugin is not needed with Linux. There is already a ppa for loading the high resolution coastline. 
