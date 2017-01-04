@@ -36,6 +36,7 @@
 #include <wx/wfstream.h>
 #include <wx/progdlg.h>
 #include <wx/url.h>
+#include <memory>
 
 #define BUFSIZE 0x10000
 
