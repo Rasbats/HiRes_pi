@@ -36,7 +36,12 @@
 #include <wx/wfstream.h>
 #include <wx/progdlg.h>
 #include <wx/url.h>
-#include <memory>
+#include <wx/filename.h>
+#include <wx/filefn.h>
+
+#include <windows.h>
+#include <stdio.h>
+#include <aclapi.h> 
 
 #define BUFSIZE 0x10000
 
@@ -127,6 +132,22 @@ void Dlg::OnExtract(wxCommandEvent &event)
 		return;
 	}
 	
+	//Test for write access
+
+	wxString zpath = GetOCPN_ExePath();
+	zpath.Replace(_T("opencpn.exe"), _T(""));
+	zpath += _T("gshhs");
+
+	wxFileName dirname(zpath, wxEmptyString);
+
+	bool s = dirname.SetPermissions(wxS_DIR_DEFAULT);
+	bool w = dirname.IsDirWritable();
+
+	if (!w){
+		wxMessageBox(_("No permission to copy the HiRes files\n Administrator permission is needed to copy these files"), _("No write access"));
+		return;
+	}
+
 	wxURL url(wxT("http://opencpn.org/ocpn/downloads/data/GshhsHiRes.zip"));
 
 	if (url.GetError() == wxURL_NOERR)
@@ -188,8 +209,9 @@ void Dlg::OnExtract(wxCommandEvent &event)
 			else
 			{
 				localFile->Close();
-				tempFile.Close();
+				
 				wxString m_tempFileName = tempFileName.GetFullPath();
+                tempFile.Close();				
 				ExtractData(m_tempFileName);
 				wxRemoveFile(tempFileName.GetFullPath());
 			}
@@ -210,8 +232,8 @@ void Dlg::ExtractData(wxString filename)
 
 	wxString zpath = GetOCPN_ExePath();
 	zpath.Replace(_T("opencpn.exe"), _T(""));
-	zpath += _T("gshhs\\");
-    
+	zpath += _T("gshhs");
+
 	bool unzip;
 	unzip = ExtractZipFiles(filename, zpath);
 	
