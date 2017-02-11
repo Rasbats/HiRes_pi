@@ -25,6 +25,11 @@
  ***************************************************************************
  */
 
+#ifndef WX_PRECOMP
+#include "wx/wx.h"
+#endif
+
+
 #include "HiResgui_impl.h"
 #include <wx/progdlg.h>
 #include <wx/wx.h>
@@ -39,9 +44,12 @@
 #include <wx/filename.h>
 #include <wx/filefn.h>
 
-#include <windows.h>
-#include <stdio.h>
-#include <aclapi.h> 
+//#include <windows.h>
+//#include <stdio.h>
+//#include <aclapi.h>
+
+#include "curl.h" 
+#include "dialog.h"
 
 #define BUFSIZE 0x10000
 
@@ -142,13 +150,73 @@ void Dlg::OnExtract(wxCommandEvent &event)
 
 	bool s = dirname.SetPermissions(wxS_DIR_DEFAULT);
 	bool w = dirname.IsDirWritable();
+	//wxMessageBox(_("No write access"));
 
 	if (!w){
 		wxMessageBox(_("No permission to copy the HiRes files\n Administrator permission is needed to copy these files"), _("No write access"));
 		return;
+	}	
+
+	
+	//CURLOPT_FOLLOWLOCATION;
+
+	//wxString url2 = wxGetTextFromUser(
+		//wxS("Please the enter the URL of the resource to download:"), wxS("Type an URL"),
+		
+	wxString url2 = wxS("http://mikerossiter.co.uk/opencpn/files/gshhshires.zip");
+
+	//if (url2.empty())
+	//	return;     // user hit cancel
+
+	//wxString extension = url2.AfterLast('.');
+	//if (extension.length() >= 2 || extension.length() <= 4)
+	//	extension = wxS(".") + extension;
+	//else
+	//	extension = wxEmptyString;
+
+	wxFileName tempFileName;
+	wxFile tempFile;
+	wxString m_Filename;
+	tempFileName.AssignTempFileName(m_Filename, &tempFile);
+
+	//wxFileOutputStream fos(wxS("c:/plugins/downloaded_stuff") + extension);
+	wxFileOutputStream localFile(tempFile);
+
+	wxBitmap bmp;
+
+	//wxCurlTransferDialog tf;
+
+	wxCurlDownloadDialog dlg2(url2,
+		&localFile,
+		wxS("Downloading..."),
+		wxEmptyString,
+		wxNullBitmap,
+		this,
+		wxCTDS_DEFAULT_STYLE);
+
+	//dlg2.SetVerbose(true);
+
+	if (!dlg2.IsOk()){
+		wxMessageBox("Plugin problem");
+		return;
 	}
 
-	wxURL url(wxT("http://opencpn.org/ocpn/downloads/data/GshhsHiRes.zip"));
+	wxCurlDialogReturnFlag flag = dlg2.RunModal();
+	//(flag);
+
+	if (flag == wxCDRF_SUCCESS)
+	{
+		localFile.Close();
+		/*
+		int reply = wxMessageBox(wxS("Do you want to open the downloaded file with your default browser?"),
+			wxS("Open it?"), wxYES_NO, this);
+		if (reply == wxYES)
+			wxLaunchDefaultBrowser(wxS("c:\\downloaded_stuff") + extension);
+			
+	}
+
+	
+	wxURL url(wxT("https://opencpn.org/wiki/dokuwiki/lib/exe/fetch.php?media=opencpn:files:charts:gshhshires.zip"));
 
 	if (url.GetError() == wxURL_NOERR)
 	{
@@ -209,14 +277,19 @@ void Dlg::OnExtract(wxCommandEvent &event)
 			else
 			{
 				localFile->Close();
-				
+				*/
 				wxString m_tempFileName = tempFileName.GetFullPath();
+				//wxMessageBox(m_tempFileName);
                 tempFile.Close();				
 				ExtractData(m_tempFileName);
 				wxRemoveFile(tempFileName.GetFullPath());
-			}
-		}
-		delete in;		
+			
+		//}
+		//delete in;		
+	}
+	else {
+
+		wxMessageBox(_("Download is not complete"));
 	}
 }
 
@@ -241,7 +314,6 @@ void Dlg::ExtractData(wxString filename)
 		wxMessageBox(_("HiRes files have been copied to OpenCPN \n Please re-start OpenCPN"), _("Success"));
 	}
 	else {
-
 		wxMessageBox(_("Unable to copy the HiRes files"), _("Extraction failed"));
 	}
 

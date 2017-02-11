@@ -42,7 +42,7 @@ class HiRes_pi;
 class Dlg : public DlgDef
 {
 public:
-        Dlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("HiRes Plugin"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxCLOSE_BOX|wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+        Dlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("HiRes"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxCLOSE_BOX|wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
         HiRes_pi *plugin; 
 
 private:
@@ -53,6 +53,7 @@ private:
 	    void OnClose( wxCloseEvent& event );
         bool dbg;
 		wxString     m_hires_path;
+		wxString pzpath;
 };
 
 #endif

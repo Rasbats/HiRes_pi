@@ -28,7 +28,7 @@ DlgDef::DlgDef( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	
 	wxBoxSizer* bSizer71;
 	bSizer71 = new wxBoxSizer( wxHORIZONTAL );	
-	m_button3111 = new wxButton( this, wxID_ANY, _("Extract Coastline Files"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_button3111 = new wxButton( this, wxID_ANY, _("Download and install Coastline Files"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer71->Add( m_button3111, 0, wxALL, 5 );
 	
 	
